@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORCHID | CSS Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Rajdhani:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #121212;
+            --bg-card: #1a1a1a;
+            --bg-card-hover: #252525;
+            --gold-primary: #FFD700;
+            --gold-light: #FFE55C;
+            --gold-dark: #DAA520;
+            --gold-bright: #FFEC8B;
+            --gold-glow: rgba(255, 215, 0, 0.5);
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-dim: #666666;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --border-color: rgba(255, 215, 0, 0.2);
+            --shadow-gold: 0 0 25px rgba(255, 215, 0, 0.5);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 215, 0, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 215, 0, 0.03) 0%, transparent 50%);
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-secondary));
+            border-bottom: 2px solid var(--gold-dark);
+            box-shadow: var(--shadow-gold);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+            color: var(--gold-primary);
+            animation: pulse 2s infinite;
+        }
+
+        .logo-text {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(180deg, var(--gold-light), var(--gold-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn-mini {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--gold-dark);
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-secondary));
+            color: var(--gold-light);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .btn-mini:hover {
+            background: var(--gold-primary);
+            color: var(--bg-primary);
+            box-shadow: 0 0 20px var(--gold-glow);
+            transform: translateY(-2px);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(145deg, var(--bg-card), var(--bg-card-hover));
+            border: 2px solid var(--gold-dark);
+            border-left: 5px solid var(--gold-bright);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+            box-shadow: 0 0 20px var(--gold-glow);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(180deg, var(--gold-light), var(--gold-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gold-light);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 0.5rem;
+        }
+
+        /* Panels */
+        .panel {
+            background: linear-gradient(145deg, var(--bg-card), var(--bg-secondary));
+            border: 2px solid var(--gold-dark);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-gold);
+        }
+
+        .panel-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            color: var(--gold-light);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        /* Attack List */
+        .attack-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .attack-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            transition: all 0.3s;
+        }
+
+        .attack-item:hover {
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+            transform: translateX(5px);
+        }
+
+        .attack-type {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .attack-type.sqli { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; }
+        .attack-type.xss { background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid #f59e0b; }
+        .attack-type.lfi { background: rgba(59, 130, 246, 0.2); color: #3b82f6; border: 1px solid #3b82f6; }
+        .attack-type.rce { background: rgba(139, 92, 246, 0.2); color: #8b5cf6; border: 1px solid #8b5cf6; }
+
+        .attack-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .attack-ip {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--gold-light);
+        }
+
+        .attack-time {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        /* ML Services Grid */
+        .ml-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .ml-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .ml-card:hover {
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .ml-status {
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .ml-status.online { color: var(--success); }
+        .ml-status.offline { color: var(--danger); }
+        .ml-status.loading { color: var(--warning); }
+
+        /* Buttons */
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--radius-sm);
+            border: 2px solid var(--gold-dark);
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-secondary));
+            color: var(--gold-light);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background: var(--gold-primary);
+            color: var(--bg-primary);
+            box-shadow: 0 0 25px var(--gold-glow);
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            border-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+        ::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gold-primary); }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--gold-dark);
+            border-top-color: var(--gold-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon"><i class="fas fa-leaf"></i></div>
+            <div class="logo-text">ORCHID</div>
+        </div>
+        <div class="header-actions">
+            <button class="btn-mini" onclick="toggleTheme()" title="Toggle Theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="btn-mini" onclick="openSoundModal()" title="Sound Settings">
+                <i class="fas fa-volume-high"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalAttacks">0</div>
+                <div class="stat-label">Total Attacks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="detectedAttacks">0</div>
+                <div class="stat-label">Detected</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="uniqueIps">0</div>
+                <div class="stat-label">Unique IPs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="blockedIps">0</div>
+                <div class="stat-label">Blocked</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="exploitsDetected">0</div>
+                <div class="stat-label">Exploits</div>
+            </div>
+        </div>
+
+        <!-- Attacks Panel -->
+        <div class="panel">
+            <div class="panel-title">
+                <i class="fas fa-shield-alt"></i>
+                Recent Attacks
+            </div>
+            <div class="attack-list" id="attackList">
+                <div style="text-align:center;padding:2rem;color:var(--text-dim);">
+                    <i class="fas fa-radar" style="font-size:3rem;margin-bottom:1rem;"></i>
+                    <p>Loading attacks...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ML Services -->
+        <div class="panel">
+            <div class="panel-title">
+                <i class="fas fa-brain"></i>
+                ML Services Status
+            </div>
+            <div class="ml-grid" id="mlGrid">
+                <!-- Will be populated by JS -->
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="panel">
+            <div class="panel-title">
+                <i class="fas fa-flask"></i>
+                Test Attacks
+            </div>
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+                <button class="btn" onclick="sendTestAttack('sqli')">
+                    <i class="fas fa-database"></i> SQL Injection
+                </button>
+                <button class="btn" onclick="sendTestAttack('xss')">
+                    <i class="fas fa-code"></i> XSS
+                </button>
+                <button class="btn" onclick="sendTestAttack('lfi')">
+                    <i class="fas fa-folder-open"></i> Path Traversal
+                </button>
+                <button class="btn" onclick="sendTestAttack('rce')">
+                    <i class="fas fa-terminal"></i> RCE
+                </button>
+                <button class="btn btn-danger" onclick="clearData()">
+                    <i class="fas fa-trash"></i> Clear Data
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '';
+        
+        // Load data
+        async function loadStats() {
+            try {
+                const r = await fetch(`${API_BASE}/api/stats`);
+                const d = await r.json();
+                document.getElementById('totalAttacks').textContent = (d.total_attacks || 0).toLocaleString();
+                document.getElementById('detectedAttacks').textContent = (d.detected_attacks || 0).toLocaleString();
+                document.getElementById('uniqueIps').textContent = d.unique_ips || 0;
+                document.getElementById('blockedIps').textContent = d.blocked_count || 0;
+                document.getElementById('exploitsDetected').textContent = d.exploits_count || 0;
+            } catch(e) { console.error('Stats error:', e); }
+        }
+
+        async function loadAttacks() {
+            try {
+                const r = await fetch(`${API_BASE}/api/attacks/recent?limit=20`);
+                const d = await r.json();
+                const list = document.getElementById('attackList');
+                if (d.attacks && d.attacks.length > 0) {
+                    list.innerHTML = d.attacks.map(a => `
+                        <div class="attack-item">
+                            <span class="attack-type ${a.attack_type}">${a.attack_type}</span>
+                            <div class="attack-info">
+                                <span class="attack-ip">${a.source_ip}</span>
+                                <span class="attack-time">${new Date(a.timestamp).toLocaleString()}</span>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    list.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-dim);">No attacks detected</div>';
+                }
+            } catch(e) { console.error('Attacks error:', e); }
+        }
+
+        async function loadMLServices() {
+            const services = [
+                {name: 'Isolation Forest', url: '/api/ml/isolation/health'},
+                {name: 'Random Forest', url: '/api/ml/random/health'},
+                {name: 'DDoS Detector', url: '/api/ml/ddos/health'},
+                {name: 'Exploit Detector', url: '/api/ml/exploit/health'},
+                {name: 'Anomaly Detector', url: '/api/ml/anomaly/health'},
+                {name: 'Attack Classifier', url: '/api/ml/classifier/health'},
+                {name: 'NLP Analyzer', url: '/api/ml/nlp/health'},
+                {name: 'IP Reputation', url: '/api/ml/ip-reputation/health'},
+            ];
+            
+            const grid = document.getElementById('mlGrid');
+            grid.innerHTML = await Promise.all(services.map(async s => {
+                try {
+                    const r = await fetch(`${API_BASE}${s.url}`);
+                    const d = await r.json();
+                    return `<div class="ml-card">
+                        <div><i class="fas fa-brain"></i> ${s.name}</div>
+                        <div class="ml-status online">✅ Online</div>
+                    </div>`;
+                } catch(e) {
+                    return `<div class="ml-card">
+                        <div><i class="fas fa-brain"></i> ${s.name}</div>
+                        <div class="ml-status offline">❌ Offline</div>
+                    </div>`;
+                }
+            })).then(items => items.join(''));
+        }
+
+        async function sendTestAttack(type) {
+            const payloads = {
+                sqli: "' OR 1=1--",
+                xss: "<script>alert('XSS')</script>",
+                lfi: "../../../etc/passwd",
+                rce: "; id"
+            };
+            try {
+                await fetch(`http://localhost:3003/api/v2/Products?search=${encodeURIComponent(payloads[type])}`);
+                alert(`Test ${type} attack sent!`);
+                setTimeout(loadAttacks, 2000);
+            } catch(e) { alert('Error: ' + e.message); }
+        }
+
+        async function clearData() {
+            if (!confirm('Clear all attack data?')) return;
+            try {
+                await fetch(`${API_BASE}/api/clear`, {method: 'POST'});
+                alert('Data cleared!');
+                loadStats();
+                loadAttacks();
+            } catch(e) { alert('Error: ' + e.message); }
+        }
+
+        function toggleTheme() {
+            document.documentElement.setAttribute('data-theme', 
+                document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        }
+
+        function openSoundModal() {
+            alert('Sound settings - would open modal');
+        }
+
+        // Auto-refresh
+        setInterval(() => { loadStats(); loadAttacks(); }, 5000);
+        
+        // Initial load
+        loadStats();
+        loadAttacks();
+        loadMLServices();
+    </script>
+</body>
+</html>

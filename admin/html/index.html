@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORCHID Security System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Rajdhani:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --bg-primary: #030303; --bg-secondary: #080808; --bg-card: #0d0d0d; --bg-card-hover: #121212; --gold-primary: #ffd700; --gold-light: #ffec8b; --gold-dark: #b8860b; --gold-bright: #ffe135; --gold-glow: rgba(255, 215, 0, 0.3); --success: #4ade80; --danger: #f87171; --info: #60a5fa; --warning: #fbbf24; --border-gold: 1px solid rgba(255, 215, 0, 0.4); --shadow-gold: 0 0 25px rgba(255, 215, 0, 0.5); --radius-sm: 12px; --radius-md: 18px; --radius-lg: 24px; --text-primary: #f0f0f0; --text-secondary: #a0a0a0; --text-dim: #8a8aa0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Rajdhani', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; }
+        .orchid-bg { position: fixed; top: 50%; right: 2%; transform: translateY(-50%); width: 400px; height: 600px; pointer-events: none; z-index: 0; opacity: 0.2; }
+        .header { position: relative; z-index: 10; background: linear-gradient(135deg, var(--bg-card), var(--bg-secondary)); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: var(--border-gold); box-shadow: var(--shadow-gold); }
+        .logo { display: flex; align-items: center; gap: 1rem; }
+        .logo-icon { width: 50px; height: 50px; background: linear-gradient(135deg, var(--gold-light), var(--gold-primary)); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--bg-primary); box-shadow: 0 0 20px var(--gold-glow); }
+        .logo-text { font-family: 'Cinzel', serif; font-size: 1.5rem; font-weight: 700; background: linear-gradient(180deg, var(--gold-light), var(--gold-primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header-right { display: flex; align-items: center; gap: 1rem; }
+        .system-clock { font-family: 'JetBrains Mono', monospace; font-size: 1rem; color: var(--gold-light); padding: 0.5rem 1rem; background: var(--bg-card); border: var(--border-gold); border-radius: var(--radius-sm); }
+        .mini-btn { width: 40px; height: 40px; border-radius: var(--radius-sm); border: var(--border-gold); background: linear-gradient(135deg, var(--bg-card), var(--bg-secondary)); color: var(--gold-light); cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .mini-btn:hover { box-shadow: 0 0 15px var(--gold-glow); transform: translateY(-2px); }
+        .container { position: relative; z-index: 1; max-width: 1600px; margin: 0 auto; padding: 2rem; }
+        .tabs { display: flex; gap: 0.5rem; margin-bottom: 2rem; border-bottom: var(--border-gold); padding-bottom: 0.5rem; flex-wrap: wrap; }
+        .tab-btn { padding: 0.8rem 1.5rem; background: var(--bg-card); border: var(--border-gold); border-radius: var(--radius-sm) var(--radius-sm) 0 0; color: var(--text-secondary); cursor: pointer; transition: all 0.3s; font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700; }
+        .tab-btn:hover { background: var(--bg-card-hover); color: var(--gold-light); }
+        .tab-btn.active { background: linear-gradient(135deg, var(--gold-dark), var(--gold-primary)); color: var(--bg-primary); box-shadow: 0 0 20px var(--gold-glow); }
+        .stats-panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: linear-gradient(145deg, var(--bg-card), var(--bg-card-hover)); border: 2px solid var(--gold-dark); border-left: 5px solid var(--gold-bright); border-radius: var(--radius-lg); padding: 1.5rem; text-align: center; transition: all 0.3s; box-shadow: 0 0 20px var(--gold-glow); }
+        .stat-card:hover { transform: translateY(-8px); box-shadow: 0 0 40px rgba(255, 215, 0, 0.6); }
+        .stat-value { font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 700; background: linear-gradient(180deg, var(--gold-light), var(--gold-primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-label { color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+        .panel { background: linear-gradient(145deg, var(--bg-card), var(--bg-secondary)); border: 2px solid var(--gold-dark); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 2rem; box-shadow: var(--shadow-gold); position: relative; z-index: 1; }
+        .panel-title { font-family: 'Cinzel', serif; font-size: 1.3rem; color: var(--gold-light); margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; flex-wrap: wrap; }
+        .panel-title-left { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
+        .refresh-btn { padding: 0.5rem 1rem; background: var(--bg-card); border: var(--border-gold); border-radius: var(--radius-sm); color: var(--gold-light); cursor: pointer; font-family: 'Rajdhani', sans-serif; font-weight: 700; transition: all 0.3s; display: flex; align-items: center; gap: 0.5rem; }
+        .refresh-btn:hover { background: var(--gold-primary); color: var(--bg-primary); box-shadow: 0 0 15px var(--gold-glow); }
+        .action-btn-group { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .action-btn { padding: 0.5rem 1rem; background: var(--bg-card); border: var(--border-gold); border-radius: var(--radius-sm); color: var(--gold-light); cursor: pointer; font-family: 'Rajdhani', sans-serif; font-weight: 700; transition: all 0.3s; display: flex; align-items: center; gap: 0.5rem; text-decoration: none; font-size: 0.85rem; }
+        .action-btn:hover { background: var(--gold-primary); color: var(--bg-primary); box-shadow: 0 0 15px var(--gold-glow); }
+        .attack-types-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+        .attack-type-card { background: var(--bg-primary); border: var(--border-gold); border-radius: var(--radius-sm); padding: 1rem; text-align: center; }
+        .attack-type-count { font-size: 1.8rem; font-weight: bold; color: var(--gold-light); font-family: 'JetBrains Mono', monospace; }
+        .attack-type-name { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; margin-top: 0.3rem; }
+        .attack-list { max-height: 600px; overflow-y: auto; }
+        .attack-item { background: var(--bg-primary); border: var(--border-gold); border-left: 4px solid var(--gold-bright); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 0.8rem; transition: all 0.3s; cursor: pointer; }
+        .attack-item:hover { transform: translateX(5px); box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+        .attack-header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+        .attack-type-badge { padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; border: 1px solid; }
+        .attack-type-badge.sqli, .attack-type-badge.rce, .attack-type-badge.ddos { color: #ff6b81; border-color: #ff6b81; }
+        .attack-type-badge.xss, .attack-type-badge.lfi { color: #feca2a; border-color: #feca2a; }
+        .attack-type-badge.unknown { color: #a0a0a0; border-color: #a0a0a0; }
+        .attack-type-badge.zeroday { color: #a855f7; border-color: #a855f7; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        .attack-ip { font-family: 'JetBrains Mono', monospace; color: var(--text-secondary); }
+        .attack-time { color: var(--text-dim); font-size: 0.8rem; }
+        .attack-details { display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-gold); }
+        .attack-details.expanded { display: block; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .detail-row { display: flex; gap: 1rem; margin-bottom: 0.5rem; font-size: 0.85rem; }
+        .detail-label { color: var(--gold-light); min-width: 120px; font-weight: 600; }
+        .detail-value { color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; word-break: break-all; }
+        .action-btn-row { display: flex; gap: 0.5rem; margin-top: 1rem; }
+        .action-btn.blocked { background: var(--success); color: var(--bg-primary); border-color: var(--success); }
+        .activity-feed { background: var(--bg-primary); border: var(--border-gold); border-radius: var(--radius-sm); padding: 1rem; max-height: 200px; overflow-y: auto; }
+        .activity-item { display: flex; align-items: center; gap: 0.8rem; font-size: 0.8rem; font-family: 'JetBrains Mono', monospace; padding: 0.4rem 0; border-bottom: 1px solid rgba(255, 215, 0, 0.1); }
+        .activity-time { color: var(--text-dim); }
+        .activity-icon.success { color: var(--success); }
+        .activity-icon.danger { color: var(--danger); }
+        .activity-icon.info { color: var(--info); }
+        .system-description { background: linear-gradient(145deg, rgba(13,13,13,0.95), rgba(8,8,8,0.95)); border: 2px solid var(--gold-dark); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 2rem; position: relative; overflow: hidden; }
+        .system-description::before { content: ''; position: absolute; top: -50%; right: -20%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(255,215,0,0.1), transparent); border-radius: 50%; pointer-events: none; }
+        .system-desc-title { font-family: 'Cinzel', serif; font-size: 1.5rem; color: var(--gold-light); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.8rem; border-bottom: 1px solid var(--gold-dark); padding-bottom: 1rem; }
+        .system-desc-orcid { float: right; width: 140px; height: 140px; margin-left: 1.5rem; opacity: 0.5; }
+        .info-block { background: rgba(255,215,0,0.05); border: 1px solid var(--gold-dark); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+        .info-block-title { color: var(--gold-light); font-size: 0.9rem; font-weight: 700; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.8rem; }
+        .info-item { background: rgba(255,255,255,0.03); padding: 0.6rem 0.8rem; border-radius: 6px; font-size: 0.85rem; }
+        .info-item strong { color: var(--gold-light); }
+        .tag-cloud { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+        .tag { display: inline-block; padding: 0.3rem 0.7rem; background: rgba(255,215,0,0.15); border-radius: 4px; font-size: 0.75rem; color: var(--gold-light); border: 1px solid rgba(255,215,0,0.3); }
+        .tag.sqli { background: rgba(248,113,113,0.2); border-color: rgba(248,113,113,0.4); color: #f87171; }
+        .tag.xss { background: rgba(254,202,42,0.2); border-color: rgba(254,202,42,0.4); color: #feca2a; }
+        .tag.rce { background: rgba(255,71,87,0.2); border-color: rgba(255,71,87,0.4); color: #ff4757; }
+        .tag.lfi { background: rgba(255,165,2,0.2); border-color: rgba(255,165,2,0.4); color: #ffa502; }
+        .tag.ddos { background: rgba(236,72,153,0.2); border-color: rgba(236,72,153,0.4); color: #ec4899; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 1rem; }
+        .feature-card { background: rgba(255,215,0,0.08); border: 1px solid var(--gold-dark); border-radius: 8px; padding: 1rem; }
+        .feature-card h4 { color: var(--gold-light); font-size: 0.85rem; margin-bottom: 0.5rem; }
+        .feature-card p { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; }
+        .ml-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+        .ml-card { background: linear-gradient(145deg, var(--bg-card), var(--bg-card-hover)); border: 2px solid var(--gold-dark); border-radius: var(--radius-md); padding: 1.2rem; transition: all 0.3s; }
+        .ml-card:hover { transform: translateY(-3px); box-shadow: 0 0 25px rgba(255, 215, 0, 0.3); }
+        .ml-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; }
+        .ml-card-title { font-size: 0.95rem; font-weight: 700; color: var(--gold-light); display: flex; align-items: center; gap: 0.5rem; }
+        .ml-card-port { font-size: 0.75rem; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; background: rgba(255,255,255,0.05); padding: 0.2rem 0.5rem; border-radius: 4px; }
+        .ml-card-status { display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem; background: rgba(255,255,255,0.03); border-radius: 6px; }
+        .ml-status-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .ml-status-dot.online { background: var(--success); box-shadow: 0 0 10px var(--success); }
+        .ml-status-dot.offline { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
+        .ml-status-text { font-size: 0.8rem; font-weight: 600; }
+        .ml-status-text.online { color: var(--success); }
+        .ml-status-text.offline { color: var(--danger); }
+        .ml-card-response { font-size: 0.75rem; color: var(--text-dim); margin-top: 0.5rem; font-family: 'JetBrains Mono', monospace; }
+        .status-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; }
+        .status-item { background: var(--bg-primary); border: var(--border-gold); border-radius: var(--radius-sm); padding: 1rem; text-align: center; }
+        .status-indicator { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .status-indicator.online { color: var(--success); }
+        .status-indicator.offline { color: var(--danger); }
+        .status-label { font-size: 0.8rem; color: var(--text-secondary); }
+        .exploit-item, .ddos-item { background: var(--bg-primary); border: var(--border-gold); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 0.8rem; }
+        .exploit-item { border-left: 4px solid #f87171; }
+        .ddos-item { border-left: 4px solid #ec4899; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gold-primary); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .loading { text-align: center; padding: 3rem; color: var(--text-dim); }
+        .loading i { font-size: 3rem; animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .ddos-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        .ddos-stat { background: var(--bg-primary); border: var(--border-gold); border-radius: var(--radius-sm); padding: 1rem; text-align: center; }
+        .ddos-stat-value { font-size: 1.5rem; color: var(--gold-light); font-weight: bold; font-family: 'JetBrains Mono', monospace; }
+        .ddos-stat-label { font-size: 0.8rem; color: var(--text-secondary); }
+        .ddos-controls { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .control-btn { padding: 0.8rem 1.5rem; border-radius: var(--radius-sm); border: var(--border-gold); background: var(--bg-card); color: var(--gold-light); cursor: pointer; font-family: 'Rajdhani', sans-serif; font-weight: 700; transition: all 0.3s; display: flex; align-items: center; gap: 0.5rem; }
+        .control-btn:hover { box-shadow: 0 0 15px var(--gold-glow); transform: translateY(-2px); }
+        .control-btn.active { background: var(--success); color: #000 !important; border-color: var(--success); font-weight: bold; }
+        .control-btn.danger { background: var(--danger); color: white; border-color: var(--danger); }
+        .ddos-status { padding: 1rem; background: rgba(255,215,0,0.1); border: 1px solid var(--gold-dark); border-radius: var(--radius-sm); margin-bottom: 1rem; }
+        .ml-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        .ml-summary-card { background: var(--bg-primary); border: var(--border-gold); border-radius: var(--radius-sm); padding: 1rem; text-align: center; }
+        .ml-summary-value { font-size: 2rem; font-weight: bold; font-family: 'JetBrains Mono', monospace; }
+        .ml-summary-value.online { color: var(--success); }
+        .ml-summary-value.offline { color: var(--danger); }
+        .ml-summary-label { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.3rem; }
+        .orchid-showcase { background: linear-gradient(145deg, rgba(13,13,13,0.9), rgba(8,8,8,0.9)); border: 2px solid var(--gold-dark); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 2rem; text-align: center; }
+        .orchid-showcase svg { max-width: 300px; height: auto; filter: drop-shadow(0 0 30px rgba(255,215,0,0.6)); }
+        .quick-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .quick-action-card { background: linear-gradient(135deg, var(--bg-card), var(--bg-card-hover)); border: 2px solid var(--gold-dark); border-radius: var(--radius-md); padding: 1.5rem; text-align: center; cursor: pointer; transition: all 0.3s; text-decoration: none; color: var(--gold-light); display: flex; flex-direction: column; align-items: center; gap: 0.8rem; }
+        .quick-action-card:hover { transform: translateY(-5px); box-shadow: 0 0 30px rgba(255, 215, 0, 0.4); border-color: var(--gold-bright); }
+        .quick-action-icon { font-size: 2.5rem; }
+        .quick-action-title { font-size: 0.9rem; font-weight: 700; }
+        .quick-action-desc { font-size: 0.75rem; color: var(--text-secondary); }
+    </style>
+</head>
+<body>
+    <div class="orchid-bg">
+        <svg viewBox="0 0 400 650" style="width:100%;height:100%;">
+            <path d="M200 650 Q195 550 200 450 Q205 350 200 250" stroke="url(#stemGradient)" stroke-width="10" fill="none" stroke-linecap="round"/>
+            <path d="M200 550 Q140 520 100 480 Q130 510 200 540" fill="url(#leafGradient)"/>
+            <path d="M200 500 Q260 470 300 430 Q270 460 200 490" fill="url(#leafGradient)"/>
+            <g transform="translate(200,250)">
+                <ellipse cx="0" cy="-70" rx="30" ry="55" fill="url(#petalGradient)" transform="rotate(0)"/>
+                <ellipse cx="-55" cy="-30" rx="30" ry="55" fill="url(#petalGradient)" transform="rotate(-35)"/>
+                <ellipse cx="55" cy="-30" rx="30" ry="55" fill="url(#petalGradient)" transform="rotate(35)"/>
+                <ellipse cx="-45" cy="40" rx="35" ry="50" fill="url(#petalGradient)" transform="rotate(-65)"/>
+                <ellipse cx="45" cy="40" rx="35" ry="50" fill="url(#petalGradient)" transform="rotate(65)"/>
+                <path d="M0 30 Q-25 65 0 90 Q25 65 0 30" fill="url(#lipGradient)"/>
+                <circle cx="0" cy="0" r="18" fill="url(#centerGradient)"/>
+                <circle cx="0" cy="-5" r="8" fill="#fff" opacity="0.8"/>
+            </g>
+            <circle cx="150" cy="200" r="3" fill="#ffd700" opacity="0.6"/><circle cx="250" cy="180" r="2" fill="#ffd700" opacity="0.4"/><circle cx="180" cy="150" r="2" fill="#ffd700" opacity="0.5"/>
+            <defs>
+                <linearGradient id="stemGradient" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#ffd700;stop-opacity:0.9"/><stop offset="100%" style="stop-color:#b8860b;stop-opacity:0.5"/></linearGradient>
+                <linearGradient id="leafGradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#ffd700;stop-opacity:0.6"/><stop offset="100%" style="stop-color:#b8860b;stop-opacity:0.4"/></linearGradient>
+                <radialGradient id="petalGradient" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:#ffec8b;stop-opacity:1"/><stop offset="40%" style="stop-color:#ffd700;stop-opacity:0.8"/><stop offset="100%" style="stop-color:#b8860b;stop-opacity:0.6"/></radialGradient>
+                <radialGradient id="lipGradient" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:#ff6b81;stop-opacity:0.9"/><stop offset="100%" style="stop-color:#c44569;stop-opacity:0.7"/></radialGradient>
+                <radialGradient id="centerGradient" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:#fff;stop-opacity:1"/><stop offset="60%" style="stop-color:#ffec8b;stop-opacity:0.8"/><stop offset="100%" style="stop-color:#ffd700;stop-opacity:0.6"/></radialGradient>
+            </defs>
+        </svg>
+    </div>
+
+    <header class="header">
+        <div class="logo"><div class="logo-icon"><i class="fas fa-leaf"></i></div><div class="logo-text">ORCHID</div></div>
+        <div class="header-right">
+            <div class="system-clock" id="systemClock">--:--:--</div>
+            <button class="mini-btn" id="sound-toggle" onclick="toggleSound()" title="Toggle Sound"><i class="fas fa-volume-high"></i></button>
+            <button class="mini-btn" id="theme-toggle" onclick="toggleTheme()" title="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('dashboard')"><i class="fas fa-chart-line"></i> Dashboard</button>
+            <button class="tab-btn" onclick="switchTab('attacks')"><i class="fas fa-shield-alt"></i> Attacks</button>
+            <button class="tab-btn" onclick="switchTab('exploits')"><i class="fas fa-bug"></i> Exploits</button>
+            <button class="tab-btn" onclick="switchTab('ddos')"><i class="fas fa-bomb"></i> DDoS</button>
+            <button class="tab-btn" onclick="switchTab('ml')"><i class="fas fa-brain"></i> ML Services</button>
+            <button class="tab-btn" onclick="switchTab('system')"><i class="fas fa-server"></i> System</button>
+        </div>
+
+        <div id="dashboard" class="tab-content active">
+            <div class="quick-actions">
+                <a href="http://localhost:3003" target="_blank" class="quick-action-card">
+                    <div class="quick-action-icon"><i class="fas fa-shopping-cart"></i></div>
+                    <div class="quick-action-title">Juice Shop</div>
+                    <div class="quick-action-desc">Open target application</div>
+                </a>
+                <a href="/api/attacks/export?format=csv" download="orchid_attacks.csv" class="quick-action-card">
+                    <div class="quick-action-icon"><i class="fas fa-file-csv"></i></div>
+                    <div class="quick-action-title">Export Attacks</div>
+                    <div class="quick-action-desc">Download CSV report</div>
+                </a>
+                <button onclick="clearAllData()" class="quick-action-card" style="background: linear-gradient(135deg, rgba(248,113,113,0.2), rgba(239,68,68,0.2)); border-color: var(--danger);">
+                    <div class="quick-action-icon"><i class="fas fa-trash-alt"></i></div>
+                    <div class="quick-action-title">Clear All Data</div>
+                    <div class="quick-action-desc">Delete all attacks</div>
+                </button>
+                <button onclick="testManualAttack()" class="quick-action-card" style="background: linear-gradient(135deg, rgba(74,222,128,0.2), rgba(34,197,94,0.2)); border-color: var(--success);">
+                    <div class="quick-action-icon"><i class="fas fa-flask"></i></div>
+                    <div class="quick-action-title">Test Detection</div>
+                    <div class="quick-action-desc">Send test attack</div>
+                </button>
+            </div>
+            
+            <div class="stats-panel">
+                <div class="stat-card"><div class="stat-value" id="totalAttacks">0</div><div class="stat-label">Total Attacks</div></div>
+                <div class="stat-card"><div class="stat-value" id="detectedAttacks">0</div><div class="stat-label">Detected</div></div>
+                <div class="stat-card"><div class="stat-value" id="uniqueIps">0</div><div class="stat-label">Unique IPs</div></div>
+                <div class="stat-card"><div class="stat-value" id="blockedIps">0</div><div class="stat-label">Blocked</div></div>
+            </div>
+            <div class="panel">
+                <div class="panel-title"><div class="panel-title-left"><i class="fas fa-chart-pie"></i> Attack Types Distribution</div><button class="refresh-btn" onclick="loadDashboard()"><i class="fas fa-sync"></i> Refresh</button></div>
+                <div class="attack-types-grid" id="attackTypesGrid"><div class="loading"><i class="fas fa-spinner"></i><p>Loading...</p></div></div>
+            </div>
+            <div class="panel"><h3 class="panel-title"><i class="fas fa-clock"></i> Activity Feed</h3><div class="activity-feed" id="activityFeed"><div class="activity-item"><span class="activity-time">--:--:--</span><span class="activity-icon info"><i class="fas fa-info-circle"></i></span><span class="activity-text">System initialized</span></div></div></div>
+        </div>
+
+        <div id="attacks" class="tab-content">
+            <div class="panel">
+                <div class="panel-title">
+                    <div class="panel-title-left"><i class="fas fa-exclamation-triangle"></i> Recent Attacks</div>
+                    <div class="action-btn-group">
+                        <button class="refresh-btn" onclick="loadAttacks()"><i class="fas fa-sync"></i> Refresh</button>
+                        <a href="/api/attacks/export?format=csv" download="attacks.csv" class="action-btn"><i class="fas fa-download"></i> Export</a>
+                    </div>
+                </div>
+                <div class="attack-list" id="attackList"><div class="loading"><i class="fas fa-spinner"></i><p>Loading...</p></div></div>
+            </div>
+        </div>
+
+        <div id="exploits" class="tab-content">
+            <div class="panel">
+                <div class="panel-title">
+                    <div class="panel-title-left"><i class="fas fa-bug"></i> Detected Exploits</div>
+                    <div class="action-btn-group">
+                        <button class="refresh-btn" onclick="loadExploits()"><i class="fas fa-sync"></i> Refresh</button>
+                        <button class="action-btn" onclick="exportExploits()"><i class="fas fa-download"></i> Export</button>
+                    </div>
+                </div>
+                <div id="exploitList" class="attack-list"><div class="loading"><i class="fas fa-spinner"></i><p>Loading...</p></div></div>
+            </div>
+        </div>
+
+        <div id="ddos" class="tab-content">
+            <div class="panel">
+                <div class="panel-title">
+                    <div class="panel-title-left"><i class="fas fa-bomb"></i> DDoS Protection Center</div>
+                    <div class="action-btn-group">
+                        <button class="refresh-btn" onclick="loadDdos()"><i class="fas fa-sync"></i> Refresh</button>
+                        <button class="action-btn" onclick="exportDdosLogs()"><i class="fas fa-download"></i> Export</button>
+                    </div>
+                </div>
+                <div class="ddos-controls">
+                    <button class="control-btn" id="btnEnableDefense" onclick="toggleDefense(true)"><i class="fas fa-shield-alt"></i> Enable Defense</button>
+                    <button class="control-btn danger" id="btnDisableDefense" onclick="toggleDefense(false)"><i class="fas fa-shield-alt"></i> Disable Defense</button>
+                    <button class="control-btn" id="btnAutoDefense" onclick="toggleAutoDefense()"><i class="fas fa-robot"></i> Auto Defense: <span id="autoDefenseStatus">OFF</span></button>
+                    <button class="control-btn" id="btnAutoBlock" onclick="toggleAutoBlock()"><i class="fas fa-ban"></i> Auto Block: <span id="autoBlockStatus">OFF</span></button>
+                </div>
+                <div class="ddos-status">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <div><strong><i class="fas fa-shield-alt"></i> Defense Status:</strong> <span id="defenseStatus" style="color:var(--danger);">DISABLED</span></div>
+                        <div><strong><i class="fas fa-robot"></i> Auto Defense:</strong> <span id="autoDefenseLabel" style="color:var(--warning);">OFF</span></div>
+                    </div>
+                </div>
+                <div class="ddos-stats">
+                    <div class="ddos-stat"><div class="ddos-stat-value" id="ddosActive">0</div><div class="ddos-stat-label">DDoS Attacks</div></div>
+                    <div class="ddos-stat"><div class="ddos-stat-value" id="ddosRps">0</div><div class="ddos-stat-label">Avg RPS</div></div>
+                    <div class="ddos-stat"><div class="ddos-stat-value" id="ddosBlocked">0</div><div class="ddos-stat-label">Blocked IPs</div></div>
+                </div>
+                <div id="ddosList" class="attack-list"><div class="loading"><i class="fas fa-spinner"></i><p>Loading...</p></div></div>
+            </div>
+        </div>
+
+        <div id="ml" class="tab-content">
+            <div class="panel">
+                <div class="panel-title">
+                    <div class="panel-title-left"><i class="fas fa-brain"></i> ML Services Status</div>
+                    <button class="refresh-btn" onclick="loadMLServices()"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
+                <div class="ml-summary">
+                    <div class="ml-summary-card"><div class="ml-summary-value online" id="mlOnline">0</div><div class="ml-summary-label">Online</div></div>
+                    <div class="ml-summary-card"><div class="ml-summary-value offline" id="mlOffline">0</div><div class="ml-summary-label">Offline</div></div>
+                    <div class="ml-summary-card"><div class="ml-summary-value" id="mlTotal" style="color: var(--gold-light);">13</div><div class="ml-summary-label">Total Services</div></div>
+                </div>
+                <div class="ml-grid" id="mlGrid"><div class="loading"><i class="fas fa-spinner"></i><p>Loading ML services...</p></div></div>
+            </div>
+        </div>
+
+        <div id="system" class="tab-content">
+                        <div class="orchid-showcase">
+                <svg viewBox="0 0 400 650" style="width:100%;max-width:350px;height:auto;">
+                    <path d="M200 650 Q195 550 200 450 Q205 350 200 250" stroke="url(#stemGradient2)" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M200 550 Q140 520 100 480 Q130 510 200 540" fill="url(#leafGradient2)"/>
+                    <path d="M200 500 Q260 470 300 430 Q270 460 200 490" fill="url(#leafGradient2)"/>
+                    <g transform="translate(200,250)">
+                        <ellipse cx="0" cy="-70" rx="35" ry="60" fill="url(#petalGradient2)" transform="rotate(0)"/>
+                        <ellipse cx="-60" cy="-35" rx="35" ry="60" fill="url(#petalGradient2)" transform="rotate(-35)"/>
+                        <ellipse cx="60" cy="-35" rx="35" ry="60" fill="url(#petalGradient2)" transform="rotate(35)"/>
+                        <ellipse cx="-50" cy="40" rx="40" ry="55" fill="url(#petalGradient2)" transform="rotate(-65)"/>
+                        <ellipse cx="50" cy="40" rx="40" ry="55" fill="url(#petalGradient2)" transform="rotate(65)"/>
+                        <path d="M0 35 Q-30 70 0 95 Q30 70 0 35" fill="url(#lipGradient2)"/>
+                        <circle cx="0" cy="0" r="22" fill="url(#centerGradient2)"/>
+                        <circle cx="0" cy="-6" r="10" fill="#fff" opacity="0.8"/>
+                    </g>
+                    <defs>
+                        <linearGradient id="stemGradient2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#ffd700;stop-opacity:1"/><stop offset="100%" style="stop-color:#b8860b;stop-opacity:0.7"/></linearGradient>
+                        <linearGradient id="leafGradient2" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#ffd700;stop-opacity:0.8"/><stop offset="100%" style="stop-color:#b8860b;stop-opacity:0.6"/></linearGradient>
+                        <radialGradient id="petalGradient2" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:#ffec8b;stop-opacity:1"/><stop offset="40%" style="stop-color:#ffd700;stop-opacity:0.9"/><stop offset="100%" style="stop-color:#b8860b;stop-opacity:0.7"/></radialGradient>
+                        <radialGradient id="lipGradient2" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:#ff6b81;stop-opacity:1"/><stop offset="100%" style="stop-color:#c44569;stop-opacity:0.8"/></radialGradient>
+                        <radialGradient id="centerGradient2" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:#fff;stop-opacity:1"/><stop offset="60%" style="stop-color:#ffec8b;stop-opacity:0.9"/><stop offset="100%" style="stop-color:#ffd700;stop-opacity:0.7"/></radialGradient>
+                    </defs>
+                </svg>
+                <h3 style="color: var(--gold-light); margin-top: 1rem; font-family: 'Cinzel', serif;">ORCHID</h3>
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.5rem;">Многоуровневая Система Кибербезопасности</p>
+            </div>
+            
+            <div class="system-description">
+                <h3 class="system-desc-title"><i class="fas fa-shield-alt"></i> О Системе</h3>
+                <div class="system-desc-orcid">
+                    <svg viewBox="0 0 100 120" style="width:100%;height:100%;">
+                        <ellipse cx="50" cy="30" rx="12" ry="20" fill="#ffd700" opacity="0.8"/>
+                        <ellipse cx="25" cy="45" rx="12" ry="20" fill="#ffd700" opacity="0.7" transform="rotate(-30 25 45)"/>
+                        <ellipse cx="75" cy="45" rx="12" ry="20" fill="#ffd700" opacity="0.7" transform="rotate(30 75 45)"/>
+                        <ellipse cx="35" cy="70" rx="14" ry="18" fill="#ff6b81" opacity="0.6" transform="rotate(-60 35 70)"/>
+                        <ellipse cx="65" cy="70" rx="14" ry="18" fill="#ff6b81" opacity="0.6" transform="rotate(60 65 70)"/>
+                        <circle cx="50" cy="50" r="8" fill="#fff" opacity="0.9"/>
+                    </svg>
+                </div>
+                <div class="info-block">
+                    <div class="info-block-title"><i class="fas fa-info-circle"></i> Назначение</div>
+                    <p style="color: var(--text-secondary); line-height: 1.6;">ORCHID - многоуровневая система защиты на базе ИИ для обнаружения и предотвращения кибератак в реальном времени. Combines ML модели с rule-based детектированием для комплексной защиты.</p>
+                </div>
+                <div class="info-block">
+                    <div class="info-block-title"><i class="fas fa-network-wired"></i> Как Работает</div>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h4><i class="fas fa-wifi"></i> Захват Трафика</h4>
+                            <p>Traffic Sniffer перехватывает HTTP/HTTPS трафик через pyshark для глубокого анализа пакетов</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4><i class="fas fa-brain"></i> ML Анализ</h4>
+                            <p>Isolation Forest обнаруживает аномалии, Random Forest классифицирует тип атаки</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4><i class="fas fa-chart-line"></i> DDoS Детектор</h4>
+                            <p>Мониторит RPS и паттерны endpoint'ов для выявления DDoS атак</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4><i class="fas fa-link"></i> Анализ Эксплойтов</h4>
+                            <p>Exploit Analyzer выявляет многоэтапные цепочки атак и паттерны</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4><i class="fas fa-ban"></i> Автоблокировка</h4>
+                            <p>Автоматически блокирует IP после 5 атак в течение 60 секунд</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4><i class="fas fa-database"></i> Логирование</h4>
+                            <p>Все атаки записываются в зашифрованную SQLite БД через SQLCipher</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="info-block">
+                    <div class="info-block-title"><i class="fas fa-microchip"></i> ML Модели (13 Сервисов)</div>
+                    <div class="tag-cloud">
+                        <span class="tag">Isolation Forest</span><span class="tag">Random Forest</span><span class="tag">DDoS Detector</span><span class="tag">Exploit Analyzer</span><span class="tag">Anomaly Detection</span><span class="tag">Attack Classifier</span><span class="tag">NLP Analysis</span><span class="tag">IP Reputation</span><span class="tag">Rate Limiter</span><span class="tag">Behavioral Analysis</span><span class="tag">Performance Monitor</span>
+                    </div>
+                </div>
+                <div class="info-block">
+                    <div class="info-block-title"><i class="fas fa-crosshairs"></i> Типы Атак</div>
+                    <div class="tag-cloud">
+                        <span class="tag sqli">SQL Injection</span><span class="tag xss">XSS</span><span class="tag rce">RCE</span><span class="tag lfi">LFI</span><span class="tag ddos">DDoS</span><span class="tag">XXE</span><span class="tag">SSRF</span><span class="tag">CSRF</span><span class="tag">SSTI</span><span class="tag">NoSQL</span><span class="tag">Path Traversal</span><span class="tag">Command Injection</span><span class="tag">LDAP</span><span class="tag">CORS</span><span class="tag">Host Header</span><span class="tag">XML</span><span class="tag">File Upload</span><span class="tag">HTTP Smuggling</span><span class="tag">GraphQL</span><span class="tag">OpenID</span><span class="tag" style="color:#a855f7;border-color:#a855f7;">Zero-Day</span>
+                    </div>
+                </div>
+                <div class="info-block" style="background: rgba(74,222,128,0.1); border-color: var(--success);">
+                    <div class="info-block-title" style="color: var(--success);"><i class="fas fa-check-circle"></i> Автоблокировка</div>
+                    <p style="color: var(--text-secondary);">IP адреса автоматически блокируются после 5 атак в течение 60 секунд. Заблокированные IP сохраняются в БД и восстанавливаются при перезапуске системы.</p>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-title"><div class="panel-title-left"><i class="fas fa-heartbeat"></i> System Status</div><button class="refresh-btn" onclick="loadSystemStatus()"><i class="fas fa-sync"></i> Refresh</button></div>
+                <div class="status-grid" id="statusGrid"><div class="loading"><i class="fas fa-spinner"></i><p>Loading...</p></div></div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="catSound" preload="auto"><source src="cat.mp3" type="audio/mpeg"></audio>
+
+    <script src="app.js"></script>
+    <script src="exploit_expanded.js"></script>
+    <script src="ddos_metrics.js"></script>
+</body>
+</html>
