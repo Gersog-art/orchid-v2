@@ -1,0 +1,264 @@
+version: '3.8'
+
+services:
+  # ML Services
+  ml-isolation:
+    build: ./ml-core
+    container_name: orchid-ml-isolation
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./ml-core:/app
+      - ./data/models:/app/models
+    working_dir: /app
+    command: ["python", "-m", "uvicorn", "service_isolation:app", "--host", "0.0.0.0", "--port", "8000"]
+    environment:
+      - PYTHONPATH=/app
+    restart: unless-stopped
+    networks:
+      - orchid-network
+
+  ml-random:
+    build: ./ml-core
+    container_name: orchid-ml-random
+    ports:
+      - "8002:8000"
+    volumes:
+      - ./ml-core:/app
+      - ./data/models:/app/models
+    working_dir: /app
+    command: ["python", "-m", "uvicorn", "service_random:app", "--host", "0.0.0.0", "--port", "8000"]
+    environment:
+      - PYTHONPATH=/app
+    restart: unless-stopped
+    networks:
+      - orchid-network
+
+  ml-ddos:
+    build: ./ml-core
+    container_name: orchid-ml-ddos
+    ports:
+      - "8005:8005"
+    volumes:
+      - ./ml-core:/app
+    working_dir: /app
+    command: ["python", "-m", "uvicorn", "service_ddos_detector:app", "--host", "0.0.0.0", "--port", "8005"]
+    environment:
+      - PYTHONPATH=/app
+    restart: unless-stopped
+    networks:
+      - orchid-network
+
+  ml-exploit:
+    build: ./ml-core
+    container_name: orchid-ml-exploit
+    ports:
+      - "8006:8006"
+    volumes:
+      - ./ml-core:/app
+    working_dir: /app
+    command: ["python", "-m", "uvicorn", "service_exploit_detector:app", "--host", "0.0.0.0", "--port", "8006"]
+    environment:
+      - PYTHONPATH=/app
+    restart: unless-stopped
+    networks:
+      - orchid-network
+
+  ml-anomaly:
+    build: ./ml-core
+    container_name: orchid-ml-anomaly
+    ports:
+      - "8007:8007"
+    volumes:
+      - ./ml-core:/app
+    working_dir: /app
+    command: ["python", "-m", "uvicorn", "service_anomaly_detector:app", "--host", "0.0.0.0", "--port", "8007"]
+    environment:
+      - PYTHONPATH=/app
+    restart: unless-stopped
+    networks:
+      - orchid-network
+
+  ml-classifier:
+    build: ./ml-core
+    container_name: orchid-ml-classifier
+    ports:
+      - "8008:8008"
+    volumes:
+      - ./ml-core:/app
+    working_dir: /app
+    command: ["python", "-m", "uvicorn", "service_attack_classifier:app", "--host", "0.0.0.0", "--port", "8008"]
+    environment:
+      - PYTHONPATH=/app
+    restart: unless-stopped
+    networks:
+      - orchid-network
+
+  ml-nlp:
+    build: ./ml-core
+    container_name: orchid-ml-nlp
+    ports:
+      - "8009:8009"
+    volumes:
+      - ./ml-core:/app
+    working_dir: /app
+    command: ["python", "-m", "uvicorn", "service_nlp_analyzer:app", "--host", "0.0.0.0", "--port", "8009"]
+    environment:
+      - PYTHONPATH=/app
+    restart: unless-stopped
+    networks:
+      - orchid-network
+
+  ml-ip-reputation:
+    build: ./ml-core
+    container_name: orchid-ml-ip-reputation
+    ports:
+      - "8010:8010"
+    volumes:
+      - ./ml-core:/app
+    working_dir: /app
+    command: ["python", "-m", "uvicorn", "service_ip_reputation:app", "--host", "0.0.0.0", "--port", "8010"]
+    environment:
+      - PYTHONPATH=/app
+    restart: unless-stopped
+    networks:
+      - orchid-network
+
+  ml-rate-limiter:
+    build: ./ml-core
+    container_name: orchid-ml-rate-limiter
+    ports:
+      - "8011:8011"
+    volumes:
+      - ./ml-core:/app
+    working_dir: /app
+    command: ["python", "-m", "uvicorn", "service_rate_limiter:app", "--host", "0.0.0.0", "--port", "8011"]
+    environment:
+      - PYTHONPATH=/app
+    restart: unless-stopped
+    networks:
+      - orchid-network
+
+  ml-behavioral:
+    build: ./ml-core
+    container_name: orchid-ml-behavioral
+    ports:
+      - "8012:8012"
+    volumes:
+      - ./ml-core:/app
+    working_dir: /app
+    command: ["python", "-m", "uvicorn", "service_behavioral:app", "--host", "0.0.0.0", "--port", "8012"]
+    environment:
+      - PYTHONPATH=/app
+    restart: unless-stopped
+    networks:
+      - orchid-network
+
+  ml-performance:
+    build: ./ml-core
+    container_name: orchid-ml-performance
+    ports:
+      - "8013:8013"
+    volumes:
+      - ./ml-core:/app
+    working_dir: /app
+    command: ["python", "-m", "uvicorn", "service_performance:app", "--host", "0.0.0.0", "--port", "8013"]
+    environment:
+      - PYTHONPATH=/app
+    restart: unless-stopped
+    networks:
+      - orchid-network
+
+  # Admin Backend
+  admin-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.admin
+    container_name: orchid-admin-backend
+    ports:
+      - "8003:8003"
+    volumes:
+      - ./data:/app/data
+      - .:/app
+    working_dir: /app
+    restart: unless-stopped
+    networks:
+      - orchid-network
+    cap_add:
+      - NET_ADMIN
+
+  # DDoS Backend
+  ddos-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.ddos
+    container_name: orchid-ddos-backend
+    ports:
+      - "8004:8004"
+    volumes:
+      - ./data:/app/data
+    working_dir: /app
+    restart: unless-stopped
+    networks:
+      - orchid-network
+    cap_add:
+      - NET_ADMIN
+
+  # Traffic Sniffer - REAL PROMISCUOUS MODE
+  traffic-sniffer:
+    build:
+      context: ./scripts
+      dockerfile: Dockerfile.sniffer
+    container_name: orchid-sniffer
+    network_mode: host  # Host network for packet capture
+    cap_add:
+      - NET_ADMIN  # Network administration
+      - NET_RAW    # Raw packet capture
+      - SYS_ADMIN  # System administration for promiscuous mode
+    volumes:
+      - ./data:/app/data
+      - ./ml-core/models:/app/models
+      - /var/run/docker.sock:/var/run/docker.sock  # For container monitoring
+    environment:
+      - INTERFACE=any  # Capture on all interfaces
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    depends_on:
+      - ml-isolation
+      - ml-random
+
+  # Admin Panel
+  admin:
+    image: nginx:alpine
+    container_name: orchid-admin
+    ports:
+      - "3002:80"
+    volumes:
+      - ./admin/html:/usr/share/nginx/html
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    restart: unless-stopped
+    networks:
+      - orchid-network
+    depends_on:
+      - admin-backend
+      - ddos-backend
+
+  # Juice Shop (Target)
+  juice-shop:
+    image: bkimminich/juice-shop:latest
+    container_name: orchid-juice-shop
+    ports:
+      - "3003:3000"
+    environment:
+      - NODE_ENV=development
+    restart: unless-stopped
+    networks:
+      - orchid-network
+
+networks:
+  orchid-network:
+    driver: bridge
+    name: orchid-network
+    ipam:
+      config:
+        - subnet: 172.25.0.0/16
